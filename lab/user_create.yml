@@ -1,0 +1,21 @@
+---
+- name: create use base on variable
+  hosts: ansible1.example.com
+  vars_files:
+    - user_var.yml
+  vars:
+    tet: "{{users.department}}"
+  tasks:
+    - name: create user on ansible1
+      user:
+        name: "{{ item.name }}"
+        password: " {{ item.password  | password_hash('sha512') }}"
+        state: present
+      when: item.department == students
+      loop: "{{ users }}"
+      #when: tet == 'prof'
+      register: x
+      ignore_errors: yes
+    - name: debug module
+      debug:
+        msg: "message de : {{users['name']}}"

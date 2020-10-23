@@ -1,0 +1,13 @@
+---
+- name: create user using ansible vault and variable
+  hosts: ansible1.example.com
+  become: true
+  vars_files:
+    - secret.yml
+  tasks:
+    - name: create username
+      user:
+        name: "{{ username }}"
+        password: "{{ pwhash | password_hash('sha256') }}"
+        
+

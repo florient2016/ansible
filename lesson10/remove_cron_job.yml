@@ -1,0 +1,11 @@
+---
+- name: Remove schedule cron job
+  hosts: ansible1.example.com
+  become: true
+  tasks:
+    - name: cron job remove
+      cron:
+        name: add date and time to a file
+        user: user1
+        cron_file: add-date-time
+        state: absent

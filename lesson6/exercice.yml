@@ -1,0 +1,9 @@
+---
+- name: manage module such as copy, file, lineinfile and blockinfile
+  hosts: ansible1.example.com
+  tasks:
+    - name: fetch module log file from manage node
+      fetch:
+        src: /var/log/seruce
+        dest: secure_backup
+        flat: no

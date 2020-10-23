@@ -1,0 +1,19 @@
+---
+- name: copy file - set permission
+  hosts: ansible1.example.com
+  tasks:
+    - name: create file
+      file:
+        path: file.txt
+        owner: ansible
+        group: ansible
+        mode: 0777
+        state: touch
+    - name: copy file -  set permission
+      copy:
+        src: file.txt
+        dest: /home/ansible/files.txt
+        owner: ansible
+        group: ansible
+        mode: u+rw,g-wx,o-rwx
+

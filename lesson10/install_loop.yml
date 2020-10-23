@@ -1,0 +1,14 @@
+---
+- name: install the require package use lopp
+  hosts: ansible1.example.com
+  vars:
+    pack:
+      - httpd
+      - mod_ssl.x86_64
+      - httpd-tools
+  tasks:
+    - name: install packge
+      yum:
+        name: "{{ pack }}"
+        state: latest
+      loop: "{{ pack }}"

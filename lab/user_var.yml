@@ -1,0 +1,11 @@
+---
+users:
+  - name: champ
+    password: password
+    department: prof
+  - name: devops
+    password: secret
+    department: profs
+  - name: sre
+    password: geheim
+    department: students

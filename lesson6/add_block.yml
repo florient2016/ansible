@@ -1,0 +1,11 @@
+---
+- name: add block in file
+  hosts: ansible1.example.com
+  tasks:
+    - name: add block content in file
+      blockinfile:
+        path: /home/ansible/files.txt
+        block: |
+          implementation
+          of block content
+        state: present

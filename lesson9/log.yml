@@ -1,0 +1,13 @@
+---
+- name: diplay free memory
+  hosts: ansible1.example.com
+  tasks:
+    - name: show memory
+      debug:
+        msg: "Free memory {{ ansible_facts['memfree_mb']}}"
+    - name: display output variable
+      debug:
+        var: output
+        verbosity: 2
+    - name: check mode
+      shell: uname -a

@@ -1,0 +1,9 @@
+---
+- name: controleur node for load balancing
+  hosts: ansible1.example.com
+  roles: 
+    - role: lb_server
+- name: controleur node for web server
+  hosts: ansible2.example.com
+  roles:
+    - role: web_server

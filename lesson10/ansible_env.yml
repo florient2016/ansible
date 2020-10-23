@@ -1,0 +1,10 @@
+---
+- name: environemental variable
+  hosts: ansible1.example.com
+  vars:
+    local_var: "{{ ansible_env }}"
+  tasks:
+    - name: show evironement variable
+      debug:
+              msg: "{{local_var}}"
+

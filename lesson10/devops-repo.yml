@@ -1,0 +1,12 @@
+---
+- name: Configure devops repos list
+  hosts: ansible1.example.com
+  tasks:
+    - name: set devops repos list
+      yum_repository:
+        file: devops
+        name: devop
+        baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+        enabled: yes
+        gpgcheck: no
+        description: enabled devops repolist 

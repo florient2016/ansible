@@ -1,0 +1,94 @@
+---
+- name: managing variables and facts
+  hosts: ansible1.example.com 
+  vars:
+    firewall_pkg: firewalld
+    firewall_svc: firewalld
+    web_pkg: httpd
+    web_svc: httpd
+    ssl_pkg: mod_ssl
+    httpdconf_src: files/httpd.conf
+    httpdconf_dest: /etc/httpd/conf/httpd.conf
+    htaccess_src: files/.htaccess
+    secrets_dir: /etc/httpd/secrets
+    secrets_src: files/htpasswd
+    secrets_dest: "{{ secrets_dir}}/htpasswd"
+    web_root: /var/www/html
+  tasks:
+    - name: install latest  version of {{firewall_pkg}}, {{web_pkg}},{{ssl_pkg}}
+      package:
+        name:
+          - "{{ firewall_pkg }}"
+          - "{{ web_pkg }}"
+          - "{{ ssl_pkg }}"
+        state: latest
+    - name: copy {{httpdconf_src}} to {{httpdconf_dest}}
+      copy:
+        src: "{{ httpdconf_src }}"
+        dest: "{{ httpdconf_dest }}"
+        owner: root
+        group: root
+        mode: 0644
+    - name: create directory
+      file:
+        path: "{{ secrets_dir }}"
+        mode: 0500
+        owner: apache
+        group: apache
+        state: directory
+    - name: copy {{secrets_src}} to {{secrets_dest}}
+      copy:
+        src: "{{ secrets_src }}"
+        dest: "{{ secrets_dest }}"
+        owner: apache
+        group: apache
+        mode: 0400
+    - name: copy module to create a .htaccess
+      copy:
+        src: "{{ htaccess_src }}"
+        dest: "{{ web_root }}/.htaccess" 
+        owner: apache
+        group: apache
+        mode: 0400
+    - name: create a web content file
+      copy:
+        content: "{{ansible_facts['fqdn'] ({{ ansible_facts['default_ipv4']['address']}}) has been customized with ansible\n}}"
+        dest: "{{ web_root }}/index.html"
+    - name: enable and start firewalld service
+      service:
+        name: "{{ firewalld_svc }}"
+        state: started
+        enabled: true
+    - name: enabled httpd service on firewalld
+      firewalld:
+        service: https
+        permanent: true
+        immediate: true
+        state: enabled
+    - name: enabled and start a web service module {{web_svc}}
+      service:
+        name: "{{ web_svc }}"
+        state: started
+        enabled: true
+- name: test connectivity with the web server
+  hosts: ansible2.example.com
+  become: no
+  vars:
+    web_user: guest
+  vars_files:
+    - vars/secret.yml
+  tasks:
+    - name: test connectivity
+      uri:
+        url: https://ansible1.example.com
+        validate_certs: no
+        force_basic_auth: yes
+        user: "{{ web_user }}"
+        password: "{{ web_pass }}"
+        return_content: true
+        status_code: 200
+      register: result
+    - debug:
+        var: result
+
+

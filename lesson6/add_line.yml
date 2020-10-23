@@ -1,0 +1,9 @@
+---
+- name: add line in file
+  hosts: ansible1.example.com
+  tasks:
+    - name: add line in file
+      lineinfile:
+        path: /home/ansible/files.txt
+        line:  append content to the file
+        state: present

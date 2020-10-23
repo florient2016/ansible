@@ -1,0 +1,43 @@
+---
+- name: create multiple local users
+  hosts: ansible1.example.com
+  vars_files:
+    - vars/users_vars.yml
+  handlers:
+  - name: Restart sshd
+    service:
+      name: sshd
+      state: restarted
+  tasks:
+    - name: print mac address of manage node
+      debug:
+        msg: "{{ansible_facts['default_ipv4']['macaddress'] }}" 
+       
+    - debug:
+        msg: "{{  ansible_facts['devices']['partitions']}}"
+    - name: Add webadmin group
+      group:
+        name: webadmin
+        state: present
+    - name: create user account
+      user:
+        name: "{{ item.username }}"
+        groups: webadmin
+      loop: "{{ users }}"
+    - name: add authorized key
+      authorized_key:
+        user: "{{ item.username }}"
+        key: "{{ lookup('file', '/home/'+item.username+'/'+ item.username +'.key.pub')}}"
+        state: present
+      loop: "{{ users }}"
+      ignore_errors: yes
+    - name: modify sudo config to allow webadmin users sudo without a pasword
+      copy:
+        content: "%webadmin ALL=(ALL) NOPASSWD: ALL"
+        dest: /etc/sudoers.d/webadmin
+    - name: disable root login via ssh
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+      notify: Restart sshd

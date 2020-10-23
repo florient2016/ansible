@@ -1,0 +1,4 @@
+---
+- name: configure Dev web server
+  hosts: ansible1.example.com
+  force_handlers: true

@@ -1,0 +1,12 @@
+min_ram_mb: 256
+inventory_hostname: "{{ansible_hostname}}"
+package: 
+  - httpd
+  - mysql-server
+service:
+  - httpd
+  - mysqld
+web_config_file:
+  src: "BIENVENU SUR {{ansible_distribution}}"
+  dest: /var/www/html/index.html
+web_service: httpd

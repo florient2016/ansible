@@ -1,0 +1,13 @@
+---
+- name: schedule at task
+  hosts: ansible1.example.com
+  become: true
+  tasks:
+    - name: create date and time file
+      at:
+        command: "date > my_at_date_time\n"
+        count: 1
+        units: minutes
+        unique: yes
+        state: present
+

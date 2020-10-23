@@ -1,0 +1,51 @@
+- name: Enabled internet services
+  hosts: ansible1.example.com
+  become: yes
+  tasks:
+    - name: install firewalld, httpd, mysql-server,php,php-mysqlnd
+      package:
+        name:
+          - firewalld
+          - httpd
+          - mysql-server
+          - php
+          - php-mysqlnd
+        state: latest
+    - name: enable and start firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: yes
+    - name: enable http on firewalld
+      firewalld:
+        service: http
+        permanent: yes
+        immediate: yes
+        state: enabled
+    - name: enable and run httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+    - name: enabled and run mysql-server
+      service:
+        name: mysqld
+        state: started
+        enabled: yes
+    - name: generated content to /var/ww/html/index.html
+      get_url:
+        url: "https://github.com/digitalocean/sample-php/blob/master/index.php"
+        dest: /var/www/html/index.php
+        mode: 0644
+      ignore_errors: yes
+- name: test connectivity to the manage node from controler
+  hosts: ansible2.example.com
+  become: no
+  tasks:
+    - name: test connectivity
+      uri:
+        url: http://ansible1.example.com
+        return_content: yes
+        status_code: 200
+
+

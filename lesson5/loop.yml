@@ -1,0 +1,23 @@
+---
+- name: MariaDB server
+  hosts: ansible2.example.com
+  vars:
+    pkg:
+      - mysql-server
+      - python3-PyMySQL
+  tasks:
+    - name: uninstall mysql - server
+      package:
+        name: mysql-server
+        state: absent 
+    - name: mariaBD package are installed
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ pkg }}"
+    - name: start mysqld server
+      service:
+        name: mysqld
+        state: started
+        enabled: true
+

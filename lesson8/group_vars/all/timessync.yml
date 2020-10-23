@@ -1,0 +1,8 @@
+---
+#rhel-system-roles.timesync variables for all host
+
+timesync_ntp_provider: chrony
+
+timesync_ntp_servers:
+  - hostname: ansible2.example.com
+    iburst: yes

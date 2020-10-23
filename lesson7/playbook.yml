@@ -1,0 +1,27 @@
+---
+- name: configure web server
+  hosts: ansible1.example.com
+  become: yes
+  tasks:
+    - name: Include the environment task file and set the variables
+      include_tasks: env.yml
+      vars:
+        package: httpd
+        service: httpd
+        # when: ansible_facts['os_family'] == 'Redhat' 
+    - name: Import the firewall task file and set the variables
+      import_tasks: firewall.yml
+      vars: 
+        firewall_pkg: firewalld
+        firewall_svc: firewalld
+        rule:
+          - http
+          - https
+    - name: Import the placeholder task file and set the variable
+      import_tasks: placeholder.yml
+      vars:
+        file: /var/www/html/index.html
+- name: Import test play file and set the variable
+  import_playbook: test.yml
+  vars: 
+    url: 'http://ansible1.example.com'

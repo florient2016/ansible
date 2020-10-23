@@ -1,0 +1,30 @@
+---
+- name: implementation of template, stat and debug
+  hosts:  ansible1.example.com
+  vars:
+    system_owner: tete@example.com
+  become: true
+  tasks:
+    - name: copy file to the Motd
+      template:
+        src: motd.j2
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0644
+    - name: check the status of a file
+      stat:
+        path: /etc/motd
+      register: result
+    - name: debug module
+      debug:
+        var: result
+    - name: create a symlink
+      file:
+        src: file.txt
+        dest: /etc/issue
+        owner: root
+        group: root
+        mode: 0644
+        state: link
+        force: yes

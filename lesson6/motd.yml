@@ -1,0 +1,14 @@
+---
+- name: implementation of template module
+  hosts: ansible1.example.com
+  become: true
+  vars:
+    system_owner: ansible@example.com
+  tasks:
+    - name: use template module
+      template:
+        src: motd.j2
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: 0644

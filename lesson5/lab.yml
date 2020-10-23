@@ -1,0 +1,67 @@
+---
+# install apache web server and secure with mod_ssl
+# you will use conditions, handlers, and task failure handling
+- name: install apache web server and secure it with open_ssl
+  hosts: ansible1.example.com
+  vars:
+    ansible_memtotal_mb: 512
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: show fail condition requirement
+      fail:
+        msg: "{{ inventory_hostname }} did not meet minimum reqs \n"
+      register: result
+      when: >
+        ansible_memtotal_mb < min_ram_mb or
+        ansible_distribution != "CentOS"
+    # install latest package
+    - name: install {{ package }} package
+      package:
+        name: "{{ package }}"
+        state: latest
+    # enabled and start service
+    - name: enabled and start service
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop: "{{ service }}"
+  # block of config task
+    - name: implementation of blog
+      block:
+        - name: copy content to index.html
+          copy:
+            src: "{{ item.src }}"
+            dest: "{{ item.dest }}"
+          loop: "{{ web_config_file}}"
+          register: x
+          # notify: restart httpd
+      rescue:
+        - name: configure erreur message
+          debug: 
+            msg: >
+              one or more of the configuration changes failed,
+              but the web service is still active
+    # configure the firewall
+    - name: ensure web service port are open
+      firewalld:
+        service: "{{ item }}"
+        permanent: yes
+        immediate: yes
+        state: enabled
+      loop: 
+        - http
+        - https
+    # add handlers
+          #handlers:
+          #- name: restart httpd
+          #service: 
+          # name: "{{ web_service }}"
+          # state: restarted
+    - name: debug module
+      debug:
+        msg: "{{ansible_distribution}}"
+    - name: debug 2
+      debug:
+        var: result,x

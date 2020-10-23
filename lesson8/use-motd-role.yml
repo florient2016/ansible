@@ -1,0 +1,7 @@
+---
+- name: use motd role playbook
+  hosts: ansible1.example.com
+  remote_user: ansible
+  become: true
+  roles:
+    - webserver

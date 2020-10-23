@@ -1,0 +1,11 @@
+---
+- name: selinux context
+  hosts: ansible1.example.com
+  tasks:
+    - name: use file module to ensure selinux context
+      file:
+        path: /home/ansible/files.txt
+        seuser: _default
+        serole: _default
+        setype: _default
+        selevel: _default

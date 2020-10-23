@@ -1,0 +1,55 @@
+---
+- name: Enabled intranet service
+  hosts: ansible1.example.com
+  become: yes
+  tasks:
+    # define the tasks that ensure that
+    # the httpd and firewalld packages are up to date
+    - name: latest version of httpd and firewalld
+      package:
+        name:
+          - httpd
+          - firewalld
+        state: latest
+    # add some content on /var/www/html/index.html
+    - name: add content to /var/www/html/index.html 
+      copy:
+        content: "WELCOME TO MY WEB SERVER \n"
+        dest: /var/www/html/index.html
+    # define task that ensure that firewalld and httpd
+    # are start and enabled on boot
+    - name: start and enabled firewalld
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+    - name: start and enabled httpd
+      service:
+        name: httpd
+        state: started
+        enabled: true
+    #add the following line to ensure the firewalld
+    #allow remote commection to http
+    - name: allow httpd on firewalld
+      firewalld:
+        service: http
+        permanent: yes
+        immediate: yes
+        state: enabled
+# to test connectivity, define a second play targeted at
+# localhost which will test connexion with web server
+- name: test connectivity with web server
+  hosts: ansible2.example.com
+  # disable privilege excalation
+  become: no
+  tasks:
+    - name: connection to intranet web server
+      uri:
+        url: http://ansible1.example.com
+        # ensure server responce 
+        return_content: yes
+        status_code: 200
+      register: result
+    - name: print result
+      debug:
+        var: result

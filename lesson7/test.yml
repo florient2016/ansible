@@ -1,0 +1,9 @@
+---
+- name: Test web service
+  hosts: ansible2.example.com
+  become: no
+  tasks:
+    - name: connect to internet web server
+      uri:
+        url: "{{ url }}"
+        status_code: 200

@@ -1,0 +1,45 @@
+---
+- name: Ensure Apache Storage configuration
+  hosts: ansible1.example.com
+  vars_files:
+    - storage_vars.yml
+  tasks:
+    - name: correct partitions exit on /etc/vda1
+      parted:
+        device: /dev/sda
+        state: present
+        number: "{{ item.number }}"
+        part_start: "{{ item.start }}"
+        part_end: "{{ item.end }}"
+      loop: "{{ partition }}"
+    - name: Ensure volume groups exist
+      lvg:
+        vg: "{{ item.name }}"
+        pvs: "{{ item.devices }}"
+      loop: "{{ volume_groups }}"
+      register: x
+    - debug:
+        var: x
+    - name: create each logical volume LV if needed
+      lvol:
+        vg: "{{ item.vgroup }}"
+        lv: "{{ item.name }}"
+        size: "{{ item.size }}"
+      loop: "{{ logical_volume }}"
+      when: true
+    - name: ensure XFS filesystem exists on each LV
+      debug:
+        msg: TODO
+      loop: "{{ logical_volume }}"
+    - name: Ensure the correct capacity for each LV 
+      debug:
+        msg: TODO
+      loop: "{{ logical_volume }}"
+    - name: Each logical volume is mouned 
+      debug:
+        msg: TODO
+      loop: "{{ logical_volume }}"
+
+
+
+       

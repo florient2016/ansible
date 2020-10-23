@@ -1,0 +1,13 @@
+---
+- name: Install apache and start a service
+  hosts: ansible1.example.com
+  tasks:
+    - name: install package
+      yum:
+        name: "{{ ansible_facts['ansible_local']['custom']['general']['package']}}"
+        state: latest
+    - name: start service
+      service:
+        name: "{{ ansible_facts['ansible_local']['custom']['general']['service'] }}"
+        state: "{{ ansible_facts['ansible_local']['custom']['general']['state'] }}"
+        enabled: " {{ ansible_facts['ansible_local']['custom']['general']['enabled'] }}"

@@ -1,0 +1,45 @@
+---
+- name: implementation of variable
+  hosts: ansible1.example.com
+  # create a variable
+  vars:
+    web_pkg: httpd
+    firewall_pkg: firewalld
+    web_service: httpd
+    firewall_service: firewalld
+    python_pkg: python3-PyMySQL
+    rule: http
+  tasks:
+    - name: require package intall and up to date
+      package:
+        name: 
+          - "{{ web_pkg }}"
+          - "{{ firewall_pkg }}"
+          - "{{ python3-PyMySQL}}"
+        state: latest
+    - name: enabled and start {{ web_service }} package
+      service:
+        name: "{{ web_service }}"
+        enabled: yes
+        state: started
+    - name: enabled and start {{ firewall_service }}
+      service: 
+        name: "{{ firewall_service}}"
+        state: started
+        enabled: yes
+    - name: enable {{ rule }} on firewall service
+      firewalld:
+        service: "{{ rule }}"
+        persistent: yes
+        immediate: yes
+        state: enabled
+- name: verify apache is reachable
+  hosts: ansible2.example.com
+  become: no
+  tasks:
+    - name: test connectivity
+      uri:
+        url: http://ansible1.example.com
+        return_content: yes
+        status_code: 200
+

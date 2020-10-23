@@ -1,0 +1,32 @@
+---
+- name: implementation of handler
+  hosts: ansible1.example.com
+  vars:
+    web_package: httpd
+    db_package: mysql-server
+    db_service: mysqld
+  tasks:
+    - name: local time
+      command: date
+      register: result
+      changed_when: false
+    - name: debug module
+      debug:
+        var: result.stdout
+    - name: implementation of block
+      block:
+        - name: install http
+          package:
+            name: "{{ web_package }}"
+            state: present
+          failed_when: web_packaghe == "httpd"
+      rescue:
+        - name: install mysql
+          yum:
+            name: "{{ db_package }}"
+            state: present
+      always:
+        - name: start service
+          service:
+            name: "{{ db_service }}"
+            state: started
